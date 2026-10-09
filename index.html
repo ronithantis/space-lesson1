@@ -47,7 +47,7 @@ body.edit-locked #toEdit{display:none}
 #bgvideo.on{opacity:1}
 #shade{position:absolute;inset:0;pointer-events:none;transition:background .6s ease}
 #layers{position:absolute;inset:0}
-#media{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}
+#media{position:absolute;inset:0;container-type:size;display:grid;place-items:center;pointer-events:none}
 #media .frame{pointer-events:auto;position:relative;border:1px solid rgba(255,255,255,.14);box-shadow:0 calc(var(--u)*1.5) calc(var(--u)*5) rgba(0,0,0,.7);border-radius:calc(var(--u)*.5);overflow:hidden;background:#000}
 #media iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 
@@ -622,7 +622,7 @@ function renderMedia(s){
   }
   if (s.kind === 'video'){
     const id = s.vimeo[LANG] || s.vimeo.he;
-    media.innerHTML = `<div class="frame${s.full ? ' full' : ''}" style="${s.full ? 'width:100%;height:100%' : s.big ? 'width:90%;aspect-ratio:16/9' : 'width:72%;aspect-ratio:16/9'}"><iframe src="https://player.vimeo.com/video/${id}?badge=0&autopause=0&dnt=1&title=0&byline=0&portrait=0&autoplay=1${s.muted ? '&muted=1' : ''}" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowfullscreen title="סרטון"></iframe></div>`;
+    media.innerHTML = `<div class="frame${s.full ? ' full' : ''}" style="${s.full ? 'width:min(100cqw,calc(91cqh*16/9));aspect-ratio:16/9;margin-bottom:9cqh' : s.big ? 'width:min(90cqw,calc(84cqh*16/9));aspect-ratio:16/9;margin-bottom:10cqh' : 'width:72%;aspect-ratio:16/9'}"><iframe src="https://player.vimeo.com/video/${id}?badge=0&autopause=0&dnt=1&title=0&byline=0&portrait=0&autoplay=1${s.muted ? '&muted=1' : ''}" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowfullscreen title="סרטון"></iframe></div>`;
   } else if (s.kind === 'embed'){
     media.innerHTML = `<div class="frame" style="width:90%;height:84%;margin-bottom:5%"><iframe title="${s.label}" allow="autoplay; fullscreen"></iframe></div>`;
     const f = media.querySelector('iframe');
