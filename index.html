@@ -589,7 +589,8 @@ const SEQ = {
 Object.values(SEQ_IMG).forEach(src => { const i = new Image(); i.src = src; });
 let seqCur = -1, seqFront = 'seqA';
 function seqEls(){
-  ['seqA','seqB'].forEach(id => { if (!$('#'+id)){ const d = document.createElement('div'); d.id = id; $('#shade').before(d); } });
+  const sh = $('#shade');   // always keep the images directly under the shade, above the living video
+  ['seqA','seqB'].forEach(id => { let d = $('#'+id); if (!d){ d = document.createElement('div'); d.id = id; } sh.before(d); });
 }
 function seqShow(img){
   seqEls();
