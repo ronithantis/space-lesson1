@@ -639,6 +639,7 @@ function go(i){
   markMenu();
   renderSheetBtn(s);
   loadNarration(s, 0);
+  prefetchNext(cur);
   if (s.finale) armFinale();
   if (editing) syncPanel();
 }
@@ -766,8 +767,16 @@ audio.addEventListener('play', () => { nudge(false); if (audio.currentTime < .5 
 function syncOpening(play){ const s = STEPS[cur], v = document.getElementById('bgvid'); if (!s || !(s.opening || s.syncBg) || !v) return;
   if (play){ if (Math.abs(v.currentTime - audio.currentTime) > .3) v.currentTime = Math.min(audio.currentTime, (v.duration||1e9) - .05); v.play().catch(()=>{}); } else v.pause(); }
 audio.addEventListener('seeked', () => syncOpening(!audio.paused));
+function syncDrift(){ const s = STEPS[cur], v = document.getElementById('bgvid');
+  if (!s || !(s.opening || s.syncBg) || !v || audio.paused || v.readyState < 2) return;
+  if (v.paused) v.play().catch(()=>{});
+  if (Math.abs(v.currentTime - audio.currentTime) > .5) v.currentTime = Math.min(audio.currentTime, (v.duration||1e9) - .05); }
+// start downloading the next slide's living background early, so it is ready on arrival
+const prefetched = {};
+function prefetchNext(i){ const n = STEPS[i+1]; if (!n || !n.bgVideo || prefetched[n.bgVideo]) return; prefetched[n.bgVideo] = 1;
+  try { fetch(n.bgVideo).catch(()=>{}); } catch(e){} }
 audio.addEventListener('pause', () => { narrIcon.innerHTML = ICON_PLAY; syncOpening(false); });
-audio.addEventListener('timeupdate', () => { if (audio.duration) $('#narrFill').style.width = (audio.currentTime/audio.duration*100)+'%'; tickKinetic(); seqTick(); });
+audio.addEventListener('timeupdate', () => { if (audio.duration) $('#narrFill').style.width = (audio.currentTime/audio.duration*100)+'%'; tickKinetic(); seqTick(); syncDrift(); });
 audio.addEventListener('ended', () => {
   const s = STEPS[cur]; revealAllTokens(); document.body.classList.remove('seq-hide');
   narrDone();
